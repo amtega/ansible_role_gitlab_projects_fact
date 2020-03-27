@@ -2,7 +2,7 @@
 # Role dependencies
 
 galaxy_info:
-  role_name: gitlab_fork
+  role_name: gitlab_projects_fact
   author: Juan Antonio Valiño García
   description: Get facts about GitLab projects
   company: AMTEGA - Xunta de Galicia
