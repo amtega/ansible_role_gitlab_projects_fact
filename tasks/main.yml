@@ -1,2 +1,67 @@
 ---
 # Role tasks
+
+- block:
+    - name: Get number of projects pages
+      uri:
+        url: >-
+          {{ gitlab_projects_fact_api_url
+             + "/projects?owned="
+             + gitlab_projects_fact_owned | string | lower
+             + "&per_page="
+             + gitlab_projects_fact_max_page_size | string }}
+        method: GET
+        headers:
+          "Private-Token": "{{ gitlab_projects_fact_token }}"
+        return_content: yes
+        validate_certs: "{{ gitlab_projects_fact_validate_certs }}"
+      register: gitlab_projects_fact_get_projects_pages_result
+      no_log: "{{ gitlab_projects_fact_no_log | bool }}"
+
+    - name: Load projects info
+      uri:
+        url: >-
+          {{ gitlab_projects_fact_api_url
+             + "/projects?owned="
+             + gitlab_projects_fact_owned | string | lower
+             + "&page=" + gitlab_projects_fact_page_index | string
+             + "&per_page=" + gitlab_projects_fact_per_page | string }}
+        method: GET
+        headers:
+          "Private-Token": "{{ gitlab_projects_fact_token }}"
+        return_content: yes
+        validate_certs: "{{ gitlab_projects_fact_validate_certs }}"
+      loop: "{{ range(gitlab_projects_fact_total_pages | int) | list }}"
+      loop_control:
+        index_var: gitlab_projects_fact_page_index
+        extended: yes
+        label: >-
+          page {{ gitlab_projects_fact_page_index + 1 }}
+          /
+          {{ ansible_loop.length }}
+      register: gitlab_projects_fact_get_projects_result
+      no_log: "{{ gitlab_projects_fact_no_log | bool }}"
+
+    - name: Setup fact with projects info
+      set_fact:
+        gitlab_projects_fact: >-
+          {{ gitlab_projects_fact_get_projects_result.results
+             | sum(attribute="json", start=[]) }}
+  vars:
+    gitlab_projects_fact_last_link: >-
+      {{ gitlab_projects_fact_get_projects_pages_result.link.split("<")
+         | list
+         | select("search", "rel=.last.")
+         | list
+         | last }}
+
+    gitlab_projects_fact_total_pages: >-
+      {{ gitlab_projects_fact_last_link
+         | regex_replace(".*&page=([0-9]+).*", "\1" ) }}
+
+    gitlab_projects_fact_per_page: >-
+      {{ gitlab_projects_fact_last_link
+         | regex_replace(".*&per_page=([0-9]+).*", "\1" ) }}
+
+  tags:
+    - role::gitlab_projects_fact
