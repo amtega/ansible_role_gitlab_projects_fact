@@ -6,10 +6,9 @@
       uri:
         url: >-
           {{ gitlab_projects_fact_api_url
-             + "/projects?owned="
-             + gitlab_projects_fact_owned | string | lower
-             + "&per_page="
-             + gitlab_projects_fact_max_page_size | string }}
+             + "/projects?per_page="
+               + gitlab_projects_fact_max_page_size | string
+               + gitlab_projects_owned_flag }}
         method: GET
         headers:
           "Private-Token": "{{ gitlab_projects_fact_token }}"
@@ -22,10 +21,10 @@
       uri:
         url: >-
           {{ gitlab_projects_fact_api_url
-             + "/projects?owned="
-             + gitlab_projects_fact_owned | string | lower
-             + "&page=" + gitlab_projects_fact_page_index | string
-             + "&per_page=" + gitlab_projects_fact_per_page | string }}
+             + "/projects?page="
+             + (gitlab_projects_fact_page_index + 1) | string
+             + "&per_page=" + gitlab_projects_fact_per_page | string
+             + gitlab_projects_owned_flag }}
         method: GET
         headers:
           "Private-Token": "{{ gitlab_projects_fact_token }}"
@@ -62,6 +61,9 @@
     gitlab_projects_fact_per_page: >-
       {{ gitlab_projects_fact_last_link
          | regex_replace(".*&per_page=([0-9]+).*", "\1" ) }}
+
+    gitlab_projects_owned_flag: >-
+      {{ (gitlab_projects_fact_owned) | ternary("&owned=true", "") }}
 
   tags:
     - role::gitlab_projects_fact
