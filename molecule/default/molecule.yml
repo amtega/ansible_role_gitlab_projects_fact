@@ -1,0 +1,39 @@
+---
+
+dependency:
+  name: galaxy
+driver:
+  name: docker
+lint: "${MOLECULE_SCENARIO_DIRECTORY}/linters.sh"
+platforms:
+  - name: "centos7-${INSTANCE_UUID:-1}"
+    image: centos:7
+    groups:
+      - molecule_hosts
+provisioner:
+  name: ansible
+  ansible_args:
+    - --inventory=${ANSIBLE_INVENTORY}
+    - --vault-password-file=${ANSIBLE_VAULT_PASSWORD_FILE:-/etc/hostname}
+  inventory:
+    hosts:
+      molecule_hosts:
+        vars:
+          ansible_user: root
+          
+scenario:
+  test_sequence:
+    - dependency
+    - lint
+    - cleanup
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    - side_effect
+    - verify
+    - cleanup
+    - destroy
+verifier:
+  name: ansible

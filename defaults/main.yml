@@ -17,6 +17,22 @@ gitlab_projects_fact_token: mytoken
 
 gitlab_projects_fact_owned: yes
 
+# Get facts only for projects where user is member of
+
+gitlab_projects_fact_membership: yes
+
+# Get facts only for projects matching the search criteria
+
+gitlab_projects_fact_search: ""
+
+# Include ancestor namespaces when matching search criteria
+
+gitlab_projects_fact_search_namespaces: yes
+
+# Return simple facts
+
+gitlab_projects_fact_simple: no
+
 # Maximum number of projects per page. Usually this limit is hardcoded on server
 
 gitlab_projects_fact_max_page_size: 100
@@ -24,6 +40,10 @@ gitlab_projects_fact_max_page_size: 100
 # Validate server certificates
 
 gitlab_projects_fact_validate_certs: yes
+
+# Timeout for API operations
+
+gitlab_projects_timeout: 100
 
 # Hide sensitive information
 

@@ -2,50 +2,22 @@
 # Role tasks
 
 - block:
-    - name: Get number of projects pages
-      uri:
-        url: >-
-          {{ gitlab_projects_fact_api_url
-             + "/projects?per_page="
-               + gitlab_projects_fact_max_page_size | string
-               + gitlab_projects_owned_flag }}
-        method: GET
-        headers:
-          "Private-Token": "{{ gitlab_projects_fact_token }}"
-        return_content: yes
-        validate_certs: "{{ gitlab_projects_fact_validate_certs }}"
-      register: gitlab_projects_fact_get_projects_pages_result
-      no_log: "{{ gitlab_projects_fact_no_log | bool }}"
-
-    - name: Load projects info
-      uri:
-        url: >-
-          {{ gitlab_projects_fact_api_url
-             + "/projects?page="
-             + (gitlab_projects_fact_page_index + 1) | string
-             + "&per_page=" + gitlab_projects_fact_per_page | string
-             + gitlab_projects_owned_flag }}
-        method: GET
-        headers:
-          "Private-Token": "{{ gitlab_projects_fact_token }}"
-        return_content: yes
-        validate_certs: "{{ gitlab_projects_fact_validate_certs }}"
-      loop: "{{ range(gitlab_projects_fact_total_pages | int) | list }}"
-      loop_control:
-        index_var: gitlab_projects_fact_page_index
-        extended: yes
-        label: >-
-          page {{ gitlab_projects_fact_page_index + 1 }}
-          /
-          {{ ansible_loop.length }}
+    - name: Get projects info
+      gitlab_projects_api_rest:
+        parameters:
+          "membership": "{{ gitlab_projects_fact_membership | bool | lower }}"
+          "owned": "{{ gitlab_projects_fact_owned | bool | lower }}"
+          "simple": "{{ gitlab_projects_fact_simple | bool | lower }}"
+          "search": "{{ gitlab_projects_fact_search }}"
+          "search_namespaces": "{{ gitlab_projects_fact_search_namespaces | bool | lower }}"
       register: gitlab_projects_fact_get_projects_result
       no_log: "{{ gitlab_projects_fact_no_log | bool }}"
 
     - name: Setup fact with projects info
       set_fact:
         gitlab_projects_fact: >-
-          {{ gitlab_projects_fact_get_projects_result.results
-             | sum(attribute="json", start=[]) }}
+          {{ gitlab_projects_fact_get_projects_result.json }}
+
   vars:
     gitlab_projects_fact_last_link: >-
       {{ gitlab_projects_fact_get_projects_pages_result.link.split("<")
