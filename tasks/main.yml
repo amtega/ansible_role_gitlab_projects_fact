@@ -9,7 +9,8 @@
           "owned": "{{ gitlab_projects_fact_owned | bool | lower }}"
           "simple": "{{ gitlab_projects_fact_simple | bool | lower }}"
           "search": "{{ gitlab_projects_fact_search }}"
-          "search_namespaces": "{{ gitlab_projects_fact_search_namespaces | bool | lower }}"
+          "search_namespaces": >-
+            {{ gitlab_projects_fact_search_namespaces | bool | lower }}
       register: gitlab_projects_fact_get_projects_result
       no_log: "{{ gitlab_projects_fact_no_log | bool }}"
 
