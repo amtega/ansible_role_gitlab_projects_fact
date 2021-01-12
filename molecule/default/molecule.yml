@@ -19,8 +19,7 @@ provisioner:
     hosts:
       molecule_hosts:
         vars:
-          ansible_user: root
-          
+          ansible_user: root          
 scenario:
   test_sequence:
     - dependency
