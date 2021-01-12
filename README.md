@@ -40,7 +40,7 @@ To run test you need provide the variables defined in `defaults/main.yml` and al
 ```shell
 cd amtega.gitlab_projects_fact
 
-ANSIBLE_INVENTORY=~/myinventory ANSIBLE_VAULT_PASSWORD_FILE=~/myvaultpassword molecule test
+ANSIBLE_INVENTORY=~/myinventory ANSIBLE_VAULT_PASSWORD_FILE=~/myvaultpassword molecule test --all
 ```
 
 ## License
