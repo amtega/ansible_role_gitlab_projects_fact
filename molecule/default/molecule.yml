@@ -2,12 +2,18 @@
 
 dependency:
   name: galaxy
+  enabled: yes
+  options:
+    ignore-certs: yes
+    ignore-errors: yes
+    role-file: "${MOLECULE_SCENARIO_DIRECTORY}/requirements.yml"
+    requirements-file: "${MOLECULE_SCENARIO_DIRECTORY}/requirements.yml"
 driver:
   name: docker
 lint: "${MOLECULE_SCENARIO_DIRECTORY}/linters.sh"
 platforms:
-  - name: "centos7-${INSTANCE_UUID:-1}"
-    image: centos:7
+  - name: "centos8-${INSTANCE_UUID:-1}"
+    image: centos:8
     groups:
       - molecule_hosts
 provisioner:
@@ -19,7 +25,7 @@ provisioner:
     hosts:
       molecule_hosts:
         vars:
-          ansible_user: root          
+          ansible_user: root
 scenario:
   test_sequence:
     - dependency
