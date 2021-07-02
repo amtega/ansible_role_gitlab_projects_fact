@@ -21,11 +21,13 @@ provisioner:
   ansible_args:
     - --inventory=${ANSIBLE_INVENTORY}
     - --vault-password-file=${ANSIBLE_VAULT_PASSWORD_FILE:-/etc/hostname}
+    - "-vvv"
   inventory:
     hosts:
       molecule_hosts:
         vars:
           ansible_user: root
+          ansible_python_interpreter: /usr/bin/python3
 scenario:
   test_sequence:
     - dependency
