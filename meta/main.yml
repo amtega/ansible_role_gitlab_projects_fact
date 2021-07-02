@@ -3,11 +3,12 @@
 
 galaxy_info:
   role_name: gitlab_projects_fact
+  namespace: amtega
   author: Juan Antonio Valiño García
   description: Get facts about GitLab projects
   company: AMTEGA - Xunta de Galicia
   license: GPLv3 or EUPL
-  min_ansible_version: 2.9
+  min_ansible_version: 2.10
   platforms:
     - name: GenericLinux
       versions:
